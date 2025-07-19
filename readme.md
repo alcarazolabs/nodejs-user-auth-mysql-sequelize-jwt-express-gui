@@ -12,3 +12,5 @@ node start
 </pre>
 
 # Imagenes Demo
+
+<img src="https://github.com/alcarazolabs/nodejs-user-auth-mysql-sequelize-jwt-express-gui/blob/main/imagenes/1-registro.png" width="1280" height="720">
