@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Dashboard</title>
+    
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+
+    <style type="text/css">
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #17a2b8;
+            height: 100vh;
+        }
+        #login .container #login-row #login-column #login-box {
+            margin-top: 50px;
+            max-width: 600px;
+            height: 320px;
+            border: 1px solid #9C9C9C;
+            background-color: #EAEAEA;
+        }
+
+        #login .container #login-row #login-column #login-box #login-form {
+            padding: 20px;
+        }
+
+        #login .container #login-row #login-column #login-box #login-form #register-link {
+            margin-top: -85px;
+         }
+    </style>
+</head>
+<body>
+   <div id="app">
+        <div id="login">
+            <h3 class="text-center text-white pt-5">Bienvenido</h3>
+            <div class="container">
+                <div id="login-row" class="row justify-content-center align-items-center">
+                    <div id="login-column" class="col-md-6">
+                        <div id="login-box" class="col-md-12">
+                           
+
+                                <h3 class="text-center text-info">Mi Información</h3>
+                                <div class="form-group">
+                                    <label for="username" class="text-info">Username:</label><br>
+                                    <input type="username" name="username" :value="username" id="username" class="form-control" disabled>
+                                </div>
+                                <div class="form-group">
+                                    <label for="text" class="text-info">Correo:</label><br>
+                                    <input type="text" name="email" id="email" :value="email" class="form-control" disabled>
+                                </div>
+                                <div class="form-group">
+                                   
+                                    <input @click="logout" type="submit" name="submit" class="btn btn-info btn-md" value="Cerrar Sesión">
+                                </div>
+                
+                           
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> 
+
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+     <!-- Incluir Vue.js v.2 -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
+
+    <script type="text/javascript">
+      const app = new Vue({
+        el: '#app',
+         data () {
+            return {
+                username: "",
+                email: "",
+            }
+        },
+        mounted(){
+            this.fetchUserInfo()
+        },
+        methods: {
+          fetchUserInfo: function () {
+              
+              // Obtener token del localstorage
+              const token = localStorage.getItem('jwtToken');
+  
+                if (!token) {
+                    window.location.href = '/guest/login';
+                    return;
+                }
+                
+                // Verificar token con el servidor (opcional pero recomendado)
+                fetch('/userinfo', {
+                    headers: {
+                    'Authorization': `Bearer ${token}`
+                    }
+                })
+                .then(response => {
+                    if (!response.ok) throw new Error('No autorizado');
+                    return response.json();
+                })
+                .then(userData => {
+                    console.log(userData)
+                    // Mostrar información del usuario
+                    this.username = userData.user.username
+                    this.email = userData.user.email
+                })
+                .catch(() => {
+                    localStorage.removeItem('jwtToken');
+                    window.location.href = '/guest/login';
+                });
+            
+          },
+
+          logout: function (){
+                    localStorage.removeItem('jwtToken');
+                    window.location.href = '/guest/login';
+          },
+          
+        }
+      });
+    </script>
+
+</body>
+</html>
